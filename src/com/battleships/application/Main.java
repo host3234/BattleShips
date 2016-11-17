@@ -8,6 +8,9 @@ import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 
 
+
+Jesteœmy na Placement 1.0. Commit z 12 listopada!
+
 public class Main extends Application {
 	@Override
 	public void start(Stage primaryStage) {
@@ -16,7 +19,7 @@ public class Main extends Application {
 		    Scene scene = new Scene(parent, 800,600);
 			scene.getStylesheets().add(getClass().getResource("/com/battleships/board/application.css").toExternalForm());
 			primaryStage.setScene(scene);
-			primaryStage.setTitle("BattleShips v0.1");		
+			primaryStage.setTitle("BattleShips v0.3");		
 			primaryStage.show();
 		} catch(Exception e) {
 			e.printStackTrace();

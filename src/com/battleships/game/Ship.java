@@ -2,52 +2,71 @@ package com.battleships.game;
 
 import java.util.Arrays;
 
+/**
+ * Created by alex on 18.10.15.
+ */
 
 public class Ship {
 
-    private Boolean[][] shipOriginal;
-    private Boolean[][] ship;
+    private final int BOARD_SIZE = 10;
 
-    public Ship(){
-        shipOriginal = new Boolean[10][10];
-        ship =         new Boolean[10][10];
-        Arrays.fill(shipOriginal, false);
-        Arrays.fill(ship,         false);
+    private int mastCount;
+
+    private boolean[][] shipOriginal;
+    private boolean[][] ship;
+
+    public Ship(int mastCount){
+        this.mastCount = mastCount;
+        shipOriginal = new boolean[BOARD_SIZE][BOARD_SIZE];
+        ship =         new boolean[BOARD_SIZE][BOARD_SIZE];
     }
 
-    public Ship(Boolean[][] ship){
+    public Ship(boolean[][] ship){
         this.ship = ship;
         this.shipOriginal = ship;
     }
 
-    public void setShip(Boolean board, Integer length, Integer row, Integer col, Integer direction){
+    public boolean setShip(Boolean board, Integer length, Integer row, Integer col, Integer direction){
 
         switch (direction){
             case 0:
                 for (int i=0; i<length; i++){
+                    if(col-i<0){
+                        return false;
+                    }
                     ship[row][col-i] = true;
                     shipOriginal[row][col-i] = true;
                 }
                 break;
             case 1:
                 for (int i=0; i<length; i++){
-                    ship[row+1][col] = true;
-                    shipOriginal[row+1][col] = true;
+                    if(row-i<0){
+                        return false;
+                    }
+                    ship[row-i][col] = true;
+                    shipOriginal[row-i][col] = true;
                 }
                 break;
             case 2:
                 for (int i=0; i<length; i++){
+                    if(col+i>=BOARD_SIZE){
+                        return false;
+                    }
                     ship[row][col+i] = true;
                     shipOriginal[row][col+i] = true;
                 }
                 break;
             case 3:
                 for (int i=0; i<length; i++){
-                    ship[row-1][col] = true;
-                    shipOriginal[row-1][col] = true;
+                    if(row+i>=BOARD_SIZE){
+                        return false;
+                    }
+                    ship[row+i][col] = true;
+                    shipOriginal[row+i][col] = true;
                 }
                 break;
         }
+        return true;
     }
 
     public Boolean isHit(Integer col, Integer row){
@@ -68,22 +87,42 @@ public class Ship {
     }
 
     public Boolean isCollision(Ship ship){
-        for(int i=0; i<10; i++){
-            for(int j=0; j<10; j++){
-                if(ship.shipOriginal[i][j] == true &&
-                        (  this.shipOriginal[i][i]      == true
-                        || this.shipOriginal[i+1][i]    == true
-                        || this.shipOriginal[i][i+1]    == true
-                        || this.shipOriginal[i+1][i+1]  == true
-                        || this.shipOriginal[i-1][i]    == true
-                        || this.shipOriginal[i][i-1]    == true
-                        || this.shipOriginal[i-1][i-1]  == true
-                        || this.shipOriginal[i+1][i-1]  == true
-                        || this.shipOriginal[i-1][i+1]  == true)){
-                    return false;
-                }
+        for (int i = 0; i < BOARD_SIZE; i++) {
+            for (int j = 0; j < BOARD_SIZE; j++) {
+                if (ship.shipOriginal[i][j] == true)
+                    if(this.shipOriginal[i][j] == true
+                            || (i + 1 < BOARD_SIZE && this.shipOriginal[i + 1][j] == true)
+                            || (j + 1 < BOARD_SIZE && this.shipOriginal[i][j + 1] == true)
+                            || (i + 1 < BOARD_SIZE && j + 1 < BOARD_SIZE && this.shipOriginal[i + 1][j + 1] == true)
+                            || (i - 1 >= 0         && this.shipOriginal[i - 1][j] == true)
+                            || (j - 1 >= 0         && this.shipOriginal[i][j - 1] == true)
+                            || (i - 1 >= 0 && j - 1 >= 0         && this.shipOriginal[i - 1][j - 1] == true)
+                            || (j - 1 >= 0 && i + 1 < BOARD_SIZE && this.shipOriginal[i + 1][j - 1] == true)
+                            || (i - 1 >= 0 && j + 1 < BOARD_SIZE && this.shipOriginal[i - 1][j + 1] == true)) {
+                        return true;
+                    }
             }
         }
-        return true;
+        return false;
+    }
+
+    public Boolean isPlaceAndSurrFree(Integer row, Integer col){
+        if(this.ship[row][col] == true
+                || (row + 1 < BOARD_SIZE && this.ship[row + 1][col] == true)
+                || (col + 1 < BOARD_SIZE && this.ship[row][col + 1] == true)
+                || (row + 1 < BOARD_SIZE && col + 1 < BOARD_SIZE && this.ship[row + 1][col + 1] == true)
+                || (row - 1 >= 0         && this.ship[row - 1][col] == true)
+                || (col - 1 >= 0         && this.ship[row][col - 1] == true)
+                || (row - 1 >= 0 && col - 1 >= 0         && this.ship[row - 1][col - 1] == true)
+                || (col - 1 >= 0 && row + 1 < BOARD_SIZE && this.ship[row + 1][col - 1] == true)
+                || (row - 1 >= 0 && col + 1 < BOARD_SIZE && this.ship[row - 1][col + 1] == true)) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    public int getMastCount() {
+        return mastCount;
     }
 }
